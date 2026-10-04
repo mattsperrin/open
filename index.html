@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Open in Capacities</title>
+<style>
+  :root { --bg: #fafafa; --fg: #222; --muted: #777; --accent: #7a5cd6; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #1c1c1e; --fg: #eee; --muted: #999; --accent: #a48ae8; } }
+  body { background: var(--bg); color: var(--fg); font: 16px/1.5 -apple-system, system-ui, sans-serif;
+         margin: 0; padding: 48px 16px; text-align: center; }
+  a.button { display: inline-block; margin: 8px; padding: 10px 18px; border-radius: 8px;
+             background: var(--accent); color: #fff; text-decoration: none; }
+  a.quiet { color: var(--muted); }
+  p { color: var(--muted); }
+</style>
+</head>
+<body>
+<!--
+  Hands a link on to the Capacities desktop or mobile app.
+
+  Outlook drops capacities:// links from calendar entries but keeps https ones, so CapWrap writes
+  task blocks with https://mattsperrin.github.io/open/#<space-id>/<object-id>. The ids sit after
+  the #, which the browser never sends to the server, so nothing about the task leaves the device.
+-->
+<h1>Opening in Capacities…</h1>
+<p id="note">If nothing happens, use the button.</p>
+<p>
+  <a class="button" id="app" href="#">Open in Capacities</a><br>
+  <a class="quiet" id="web" href="#">Open on the web instead</a>
+</p>
+<script>
+  const uuid = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
+  const m = decodeURIComponent(location.hash.slice(1)).match(new RegExp("^(" + uuid + ")/(" + uuid + ")$"));
+  if (m) {
+    const address = m[1] + "/" + m[2];
+    document.getElementById("app").href = "capacities://" + address;
+    document.getElementById("web").href = "https://app.capacities.io/" + address;
+    location.href = "capacities://" + address;
+  } else {
+    document.querySelector("h1").textContent = "Not a Capacities link";
+    document.getElementById("note").textContent = "This page opens links of the form #space-id/object-id.";
+    document.getElementById("app").style.display = "none";
+    document.getElementById("web").style.display = "none";
+  }
+</script>
+</body>
+</html>
