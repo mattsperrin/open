@@ -38,6 +38,13 @@
     document.getElementById("app").href = "capacities://" + address;
     document.getElementById("web").href = "https://app.capacities.io/" + address;
     location.href = "capacities://" + address;
+    // Once Capacities has taken over, the browser loses focus: close this tab so the browser stays
+    // out of the way. Allowed because the tab has only this page in its history (opened from
+    // Outlook); if the browser refuses, the page just stays, buttons and all.
+    let closed = false;
+    const done = () => { if (!closed) { closed = true; setTimeout(() => window.close(), 150); } };
+    window.addEventListener("blur", done);
+    document.addEventListener("visibilitychange", () => { if (document.hidden) done(); });
   } else {
     document.querySelector("h1").textContent = "Not a Capacities link";
     document.getElementById("note").textContent = "This page opens links of the form #space-id/object-id.";
